@@ -66,6 +66,9 @@
   .facts li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; }
   .facts svg { width: 18px; height: 18px; margin-top: 3px; fill: none; stroke: var(--amber); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .hero :focus-visible { outline-color: var(--amber); }
+  .resume { margin: 14px 0 0; }
+  .hero .btn-ghost { color: var(--on-dark-muted); font-size: 16px; }
+  .hero .btn-ghost:hover { color: var(--on-dark); }
 
   /* Buttons */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: var(--radius-btn);
@@ -260,6 +263,7 @@
     </ul>
     <button class="btn btn-primary" id="startBtn" type="button">Lebensrad starten
       <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    <p class="resume hidden" id="resumeRow"><button class="btn-ghost" type="button" id="resumeBtn">Weitermachen, wo du aufgehört hast</button></p>
   </div>
 </section>
 
@@ -891,6 +895,7 @@ function show(step) {
   $("step-reflect").classList.toggle("hidden", step !== "reflect");
   $("step-result").classList.toggle("hidden", step !== "result");
   $("cta").classList.toggle("hidden", step !== "result");
+  if (step === "intro") $("resumeRow").classList.toggle("hidden", !hasProgress());
   if (step === "wheel") { drawWheel($("wheel"), { interactive: true }); syncSliders(); }
   if (step === "reflect") { state.focus = state.focus.filter(isSet); buildChips(); buildFocusCards(); $("signal").value = state.signal; }
   if (step === "result") buildResult();
@@ -904,7 +909,16 @@ mq.addEventListener("change", () => { setRadius(); if (state.step === "wheel") d
 $("date").value = state.date;
 $("date").addEventListener("change", (e) => { state.date = e.target.value; save(); });
 $("signal").addEventListener("input", (e) => { state.signal = e.target.value; save(); });
-$("startBtn").addEventListener("click", () => show("wheel"));
+function resumeStep() {
+  if (allSet() && state.focus.length === 3 && ["result", "reflect"].includes(state.step)) return state.step;
+  return allSet() ? "reflect" : "wheel";
+}
+const hasProgress = () => Object.keys(state.scores).length > 0;
+$("startBtn").addEventListener("click", () => {
+  if (hasProgress()) { state = blankState(); $("date").value = state.date; $("email").value = ""; $("consent").checked = false; $("mailStatus").textContent = ""; }
+  show("wheel");
+});
+$("resumeBtn").addEventListener("click", () => show(resumeStep()));
 $("toReflectBtn").addEventListener("click", () => { if (allSet()) show("reflect"); });
 $("backToWheelBtn").addEventListener("click", () => show("wheel"));
 $("toResultBtn").addEventListener("click", () => { if (state.focus.length === 3) show("result"); });
@@ -913,8 +927,10 @@ $("resetBtn").addEventListener("click", () => { if (confirm("Alle Werte zurücks
 $("restartBtn").addEventListener("click", () => { if (confirm("Neu beginnen? Deine bisherigen Angaben werden gelöscht.")) { state = blankState(); $("date").value = state.date; save(); show("intro"); } });
 $("mailForm").addEventListener("submit", sendMail);
 
-const resumable = { intro: true, wheel: true, reflect: allSet(), result: allSet() && state.focus.length === 3 };
-show(resumable[state.step] ? state.step : (allSet() ? "reflect" : (Object.keys(state.scores).length ? "wheel" : "intro")));
+// Immer mit der Startseite beginnen; vorhandene Angaben lassen sich dort fortsetzen.
+const lastStep = state.step;
+show("intro");
+state.step = lastStep; save();
 </script>
 </body>
 </html>
