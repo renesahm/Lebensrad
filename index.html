@@ -37,11 +37,14 @@
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
   /* Kopfzeile */
-  .topbar { background: var(--weiss); border-bottom: 1px solid var(--linie-karte); }
-  .topbar .wrap { display: flex; align-items: center; gap: 12px; height: 64px; }
-  .topbar img { width: 36px; height: 36px; display: block; }
-  .topbar .who { font-family: var(--font-heading); font-weight: 600; font-size: 16px; color: var(--ink); line-height: 1.2; }
-  .topbar .role { display: block; font-family: var(--font-body); font-weight: 400; font-size: 13px; color: var(--ink-muted); }
+  .wrap-wide { max-width: 1124px; margin: 0 auto; padding: 0 16px; }
+  .brand { display: flex; align-items: center; gap: 14px; color: var(--on-dark); text-decoration: none; }
+  .brand img { width: 40px; height: 40px; display: block; border: 1px solid var(--on-dark-muted); }
+  .brand .who { font-family: var(--font-heading); font-weight: 700; font-size: 17px; line-height: 1.25; color: var(--on-dark); }
+  .brand .role { display: block; font-family: var(--font-body); font-weight: 400; font-size: 13px; line-height: 1.4; color: var(--on-dark); }
+  .topbar { background: var(--navy); border-bottom: 1px solid var(--linie-dunkel); }
+  .topbar .wrap-wide { display: flex; align-items: center; height: 72px; }
+  .topbar :focus-visible, footer :focus-visible { outline-color: var(--amber); }
 
   /* Typo */
   .eyebrow { font: 700 13px/16px var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--gruen-dunkel); margin: 0 0 12px; }
@@ -167,10 +170,12 @@
   .cta { margin-top: 0; }
   .cta .note { color: var(--on-dark-muted); font-size: 15px; margin: 14px 0 0; }
 
-  footer { border-top: 1px solid var(--linie); }
-  footer .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 20px; padding-bottom: 28px;
-    font: 400 12px/16px var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-muted); }
-  footer img { width: 28px; height: 28px; display: block; }
+  footer { background: var(--navy); color: var(--on-dark); border-top: 1px solid var(--linie-dunkel); }
+  footer .foot-top { display: flex; align-items: center; justify-content: space-between; gap: 20px 32px; flex-wrap: wrap; padding: 28px 0 24px; border-bottom: 1px solid var(--linie-dunkel); }
+  footer nav { display: flex; gap: 24px; flex-wrap: wrap; }
+  footer nav a { color: var(--on-dark); text-decoration: none; font: 400 13px/1.4 var(--font-body); }
+  footer nav a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  footer .copy { margin: 0; padding: 24px 0 32px; text-align: center; font: 400 13px/1.4 var(--font-body); color: var(--on-dark-muted); }
   @media (max-width: 480px) { .res .n small { display: inline; margin-left: 6px; } .res { grid-template-columns: 1fr; gap: 6px; padding: 18px; } .actions .btn { width: 100%; } }
 
   @media print {
@@ -182,9 +187,11 @@
 </head>
 <body>
 <header class="topbar">
-  <div class="wrap">
-    <img src="assets/rs-logo.png" alt="RS Logo">
-    <div class="who">René Sahm<span class="role">Sparringspartner für Top-Führungskräfte</span></div>
+  <div class="wrap-wide">
+    <a class="brand" href="https://www.renesahm.de" aria-label="René Sahm, zur Website">
+      <img src="assets/rs-logo.png" alt="">
+      <span class="who">René Sahm</span>
+    </a>
   </div>
 </header>
 
@@ -322,9 +329,18 @@
 </main>
 
 <footer>
-  <div class="wrap">
-    <img src="assets/rs-logo.png" alt="">
-    <span>renesahm.de | © René Sahm</span>
+  <div class="wrap-wide">
+    <div class="foot-top">
+      <a class="brand" href="https://www.renesahm.de">
+        <img src="assets/rs-logo.png" alt="">
+        <span class="who">René Sahm<span class="role">Sparringspartner für ambitionierte Führungskräfte im Konzern</span></span>
+      </a>
+      <nav aria-label="Rechtliches">
+        <a href="https://www.renesahm.de/impressum" target="_blank" rel="noopener">Impressum</a>
+        <a href="https://www.renesahm.de/datenschutz" target="_blank" rel="noopener">Datenschutz</a>
+      </nav>
+    </div>
+    <p class="copy">©<span id="year">2026</span>. René Sahm. All Rights Reserved.</p>
   </div>
 </footer>
 
@@ -707,6 +723,7 @@ function show(step) {
   window.scrollTo({ top: 0 });
 }
 
+$("year").textContent = new Date().getFullYear();
 buildSliders();
 setupWheelInput();
 mq.addEventListener("change", () => { setRadius(); if (state.step === "wheel") drawWheel($("wheel"), { interactive: true }); if (state.step === "result") buildResult(); });
