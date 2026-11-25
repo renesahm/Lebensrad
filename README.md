@@ -38,11 +38,28 @@ Mit Endpunkt schickt die Seite einen `POST` mit `Content-Type: application/json`
 | `fokus` | Liste mit `id`, `bereich`, `wert`, `was_fehlt`, `erster_schritt` |
 | `signal` | Antwort auf Frage 4 |
 | `text` | fertige Klartext-Version der Mail |
-| `html` | fertige HTML-Version der Mail (Inline-Styles, Markenfarben, Balken pro Bereich) |
+| `html` | fertige HTML-Version der Mail als Mailtext (Inline-Styles, Markenfarben, Balken pro Bereich) |
 | `rad_svg` | das ausgefüllte Rad als SVG mit Inline-Styles |
+| `pdf_dateiname` | z. B. `Lebensrad-2026-11-25.pdf` |
+| `pdf_base64` | der fertige Report als PDF, Base64-kodiert (ohne `data:`-Präfix), ca. 0,7–1 MB |
 | `quelle` | URL der Seite |
 
 Jede Antwort mit HTTP-Status 2xx gilt als Erfolg.
+
+### PDF-Report
+
+Beim Klick auf „Senden“ baut die Seite im Browser einen A4-Report und hängt ihn als `pdf_base64` an:
+
+1. Titelblatt (Navy): „Mein Lebensrad“, Datum, die drei Fokusbereiche
+2. Das Rad mit allen 12 Werten, nach Oberbereichen
+3. Die drei Fokusbereiche mit „Was fehlt für eine 10“ und „Erster Schritt“, dazu die Antwort auf Frage 4 (bei langen Antworten wird automatisch auf weitere Seiten umbrochen)
+4. Abschlussseite (Navy) mit „Standortgespräch buchen“, im PDF anklickbar
+
+Der Versanddienst muss das PDF als Anhang an die Mail hängen: Dateiname aus `pdf_dateiname`, Inhalt aus `pdf_base64`. Viele Dienste nehmen Anhänge direkt als Base64 entgegen (bei Brevo nach meinem Kenntnisstand im Feld `attachment` mit `name` und `content`; bitte in der Doku des jeweiligen Dienstes prüfen). Falls die PDF-Erstellung im Browser scheitert, sind beide Felder `null` und die Mail geht trotzdem raus.
+
+Die PDF-Seiten sind Bilder (aus dem HTML gerendert), der Text im PDF ist daher nicht markierbar. Dafür sieht der Report überall gleich aus.
+
+Die Bibliotheken dafür liegen in `vendor/` (html2canvas 1.4.1, jsPDF 2.5.1, beide MIT-Lizenz). Sie werden erst beim Versand geladen und kommen vom eigenen Server, nicht von einem CDN.
 
 Hinweise:
 

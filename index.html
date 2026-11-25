@@ -178,6 +178,56 @@
   footer .copy { margin: 0; padding: 24px 0 32px; text-align: center; font: 400 13px/1.4 var(--font-body); color: var(--on-dark-muted); }
   @media (max-width: 480px) { .res .n small { display: inline; margin-left: 6px; } .res { grid-template-columns: 1fr; gap: 6px; padding: 18px; } .actions .btn { width: 100%; } }
 
+
+  /* PDF-Report (wird nur beim Versand unsichtbar aufgebaut) */
+  #reportStage { position: fixed; left: -12000px; top: 0; }
+  .rp-page { position: relative; width: 794px; height: 1123px; overflow: hidden; background: var(--kuehlweiss); color: var(--ink-body); font: 400 14px/1.5 var(--font-body); }
+  .rp-body { position: absolute; left: 56px; right: 56px; top: 56px; bottom: 92px; }
+  .rp-foot { position: absolute; left: 56px; right: 56px; bottom: 32px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--linie); padding-top: 14px;
+    font: 400 11px/16px var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-muted); }
+  .rp-foot img { width: 24px; height: 24px; display: block; }
+  .rp-eyebrow { font: 700 12px/16px var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--gruen-dunkel); margin: 0 0 10px; }
+  .rp-h { font: 600 40px/1.08 var(--font-heading); color: var(--ink); margin: 0 0 10px; }
+  .rp-lead { font: 400 16px/1.5 var(--font-body); color: var(--petrol); margin: 0 0 22px; }
+  .rp-cover { background: var(--navy); color: var(--on-dark); }
+  .rp-cover::before { content: ""; position: absolute; width: 520px; height: 520px; border-radius: 50%; background: var(--navy-raised); top: -170px; right: -170px; }
+  .rp-cover .rp-body { top: 72px; display: flex; flex-direction: column; }
+  .rp-cover .rp-cover-list { margin-top: auto; }
+  .rp-logo { display: flex; align-items: center; gap: 14px; position: relative; }
+  .rp-logo img { width: 52px; height: 52px; border: 1px solid var(--on-dark-muted); display: block; }
+  .rp-logo b { font: 700 18px/1.25 var(--font-heading); color: var(--on-dark); display: block; }
+  .rp-logo span { font: 400 12px/1.4 var(--font-body); color: var(--on-dark-muted); }
+  .rp-cover .rp-eyebrow { color: var(--amber); margin-top: 220px; }
+  .rp-display { font: 600 76px/1 var(--font-heading); color: var(--on-dark); margin: 0 0 18px; position: relative; }
+  .rp-sub { font: 400 22px/1.35 var(--font-heading); color: var(--on-dark-muted); margin: 0; }
+  .rp-cover-list { margin: 56px 0 0; padding: 22px 0 0; border-top: 1px solid var(--linie-dunkel); list-style: none; display: grid; gap: 14px; }
+  .rp-cover-list li { display: grid; grid-template-columns: 44px 1fr auto; align-items: baseline; gap: 12px; }
+  .rp-cover-list .no { font: 600 18px/1 var(--font-heading); color: var(--amber); }
+  .rp-cover-list .nm { font: 500 22px/1.2 var(--font-heading); color: var(--on-dark); }
+  .rp-cover-list .sc { font: 400 15px/1 var(--font-body); color: var(--salbei-hell); }
+  .rp-cover .rp-foot { border-top-color: var(--linie-dunkel); color: var(--on-dark-muted); }
+  .rp-wheel { background: var(--weiss); border: 1px solid var(--linie-karte); border-radius: var(--radius-lg); padding: 8px; }
+  .rp-wheel svg { display: block; width: 100%; height: auto; }
+  .rp-groups { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 18px; }
+  .rp-groups h4 { font: 700 10.5px/14px var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--gruen-dunkel); margin: 0 0 6px; }
+  .rp-groups div div { display: flex; justify-content: space-between; border-top: 1px solid var(--linie-karte); padding: 5px 0; font-size: 13px; color: var(--ink); }
+  .rp-groups div div b { font: 600 14px/1.2 var(--font-heading); color: var(--mittelblau); }
+  .rp-card { background: var(--weiss); border: 1px solid var(--linie-karte); border-left: 3px solid var(--gruen); border-radius: var(--radius-lg); padding: 20px 24px; margin: 0 0 14px; }
+  .rp-card-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .rp-card-h h3 { font: 600 21px/1.25 var(--font-heading); color: var(--petrol); margin: 0; }
+  .rp-card-h span { font: 600 22px/1 var(--font-heading); color: var(--mittelblau); }
+  .rp-card dt { font: 700 11px/16px var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--gruen-dunkel); margin-top: 10px; }
+  .rp-card dd { margin: 3px 0 0; white-space: pre-wrap; color: var(--ink-body); }
+  .rp-insight { border-left: 3px solid var(--gruen); padding: 2px 0 2px 18px; margin: 8px 0 18px; }
+  .rp-insight p { margin: 0; white-space: pre-wrap; }
+  .rp-close .rp-body { top: 72px; display: flex; flex-direction: column; }
+  .rp-close .rp-eyebrow { color: var(--amber); margin-top: 220px; }
+  .rp-close h2 { font: 600 48px/1.1 var(--font-heading); color: var(--on-dark); margin: 0 0 24px; position: relative; }
+  .rp-close p { font: 400 17px/1.55 var(--font-body); color: var(--on-dark-muted); margin: 0 0 14px; max-width: 560px; }
+  .rp-close .rp-btn { display: inline-block; margin-top: 18px; background: var(--gruen); color: var(--weiss); border-radius: var(--radius-btn); padding: 15px 22px; font: 600 19px/1.3 var(--font-heading); text-decoration: none; }
+  .rp-close .rp-url { margin-top: 14px; font-size: 14px; color: var(--salbei-hell); }
+  .rp-close .rp-logo { margin-top: auto; }
+
   @media print {
     .topbar, .no-print, .cta, footer { display: none !important; }
     body { background: #fff; }
@@ -417,7 +467,8 @@ function sectorPath(a0, a1, r) {
 }
 function drawWheel(svg, opts) {
   svg.textContent = "";
-  svg.setAttribute("viewBox", mq.matches ? "-330 -200 660 400" : "-330 -310 660 620");
+  const mobile = mq.matches && !(opts && opts.forceDesktop);
+  svg.setAttribute("viewBox", mobile ? "-330 -200 660 400" : "-330 -310 660 620");
   const highlight = opts && opts.highlight || [];
   // Sektoren der vier Bereiche, abwechselnd getönt
   el("path", { d: sectorPath(15, 105, R), class: "sector" }, svg);
@@ -446,7 +497,7 @@ function drawWheel(svg, opts) {
   AREAS.forEach((a, i) => {
     const deg = i * 30, [x, y] = pt(deg, R + 18);
     const anchor = Math.abs(x) < 5 ? "middle" : (x > 0 ? "start" : "end");
-    const dy = Math.abs(x) < 5 ? (y < 0 ? -4 : (mq.matches ? 22 : 16)) : (mq.matches ? 8 : 5);
+    const dy = Math.abs(x) < 5 ? (y < 0 ? -4 : (mobile ? 22 : 16)) : (mobile ? 8 : 5);
     const t = el("text", { x, y: y + dy, "text-anchor": anchor, class: "lbl" + (highlight.includes(a.id) ? " focus" : "") }, svg);
     t.appendChild(document.createTextNode(a.name + " "));
     const v = el("tspan", { class: isSet(a.id) ? "val" : "open" }, t);
@@ -673,7 +724,7 @@ function inlineSvgStyles(svg) {
     bar: { stroke: "#3e6f8f", "stroke-width": "5", "stroke-linecap": "round", "stroke-opacity": ".35" },
     area: { fill: "#3e6f8f", "fill-opacity": ".18", stroke: "#3e6f8f", "stroke-width": "2.5" },
     dot: { fill: "#1c2a3d", stroke: "#fff", "stroke-width": "2" },
-    lbl: { "font-family": "Arial, sans-serif", "font-size": "15", "font-weight": "bold", fill: "#1c2a3d" },
+    lbl: { "font-family": "Alexandria, Arial, sans-serif", "font-size": "15", "font-weight": "bold", fill: "#1c2a3d" },
     grp: { "font-family": "Arial, sans-serif", "font-size": "11.5", "font-weight": "bold", fill: "#5c6470" },
     tick: { "font-family": "Arial, sans-serif", "font-size": "10", fill: "#5c6470" },
     val: { fill: "#3e6f8f" }
@@ -686,21 +737,144 @@ function inlineSvgStyles(svg) {
   });
   return svg;
 }
+
+/* ---------- PDF-Report ---------- */
+const LIBS = [
+  "vendor/html2canvas.min.js",
+  "vendor/jspdf.umd.min.js"
+];
+function loadScript(src) {
+  return new Promise((ok, fail) => {
+    if (document.querySelector(`script[src="${src}"]`)) return ok();
+    const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = () => fail(new Error("Laden fehlgeschlagen: " + src));
+    document.head.appendChild(sc);
+  });
+}
+function rpFooter(page, n) {
+  return `<div class="rp-foot"><img src="assets/rs-logo.png" alt=""><span>renesahm.de | © René Sahm</span><span>${n}</span></div>`;
+}
+function buildReportPages() {
+  const stage = document.createElement("div"); stage.id = "reportStage";
+  document.body.appendChild(stage);
+  const pages = [];
+  const newPage = (cls) => { const pg = document.createElement("div"); pg.className = "rp-page" + (cls ? " " + cls : ""); stage.appendChild(pg); pages.push(pg); return pg; };
+  const ans = (id, k) => ((state.answers[id] || {})[k] || "").trim();
+
+  // Seite 1: Titel
+  const p1 = newPage("rp-cover");
+  p1.innerHTML = `<div class="rp-body">
+      <div class="rp-logo"><img src="assets/rs-logo.png" alt=""><div><b>René Sahm</b><span>Sparringspartner für ambitionierte Führungskräfte im Konzern</span></div></div>
+      <p class="rp-eyebrow">Persönlicher Report</p>
+      <h1 class="rp-display">Mein Lebensrad</h1>
+      <p class="rp-sub">Momentaufnahme vom ${esc(dateLabel())}</p>
+      <ul class="rp-cover-list">${state.focus.map((id, i) => `<li><span class="no">0${i + 1}</span><span class="nm">${esc(area(id).name)}</span><span class="sc">${state.scores[id]} von 10</span></li>`).join("")}</ul>
+    </div>`;
+
+  // Seite 2: Rad und Werte
+  const p2 = newPage();
+  p2.innerHTML = `<div class="rp-body">
+      <p class="rp-eyebrow">Wo du heute stehst</p>
+      <h2 class="rp-h">Dein Lebensrad</h2>
+      <p class="rp-lead">0 = sehr unzufrieden · 10 = sehr zufrieden. Deine drei Fokusbereiche sind grün hervorgehoben.</p>
+      <div class="rp-wheel"></div>
+      <div class="rp-groups">${GROUP_LIST.map(g => `<div><h4>${GROUPS[g].name}</h4>${GROUPS[g].order.map(id => `<div><span>${esc(area(id).name)}</span><b>${state.scores[id]}</b></div>`).join("")}</div>`).join("")}</div>
+    </div>`;
+  const svg = document.createElementNS(NS, "svg");
+  const saved = { R, STEP }; R = 190; STEP = R / 10;
+  const mqMatches = mq.matches;
+  drawWheel(svg, { highlight: state.focus, forceDesktop: true });
+  R = saved.R; STEP = saved.STEP;
+  svg.setAttribute("viewBox", "-330 -310 660 620");
+  svg.setAttribute("width", "680"); svg.setAttribute("height", "639");
+  if (mqMatches) svg.querySelectorAll(".lbl").forEach(t => t.style.fontSize = "15px");
+  p2.querySelector(".rp-wheel").appendChild(inlineSvgStyles(svg));
+
+  // Seite 3 ff.: Reflexion, mit Umbruch je Block
+  const blocks = [];
+  const intro = document.createElement("div");
+  intro.innerHTML = `<p class="rp-eyebrow">Wohin du willst</p><h2 class="rp-h">Deine drei Fokusbereiche</h2><p class="rp-lead">Für die nächsten zwölf Monate.</p>`;
+  blocks.push(intro);
+  state.focus.forEach((id, i) => {
+    const b = document.createElement("div"); b.className = "rp-card";
+    b.innerHTML = `<div class="rp-card-h"><h3>0${i + 1} ${esc(area(id).name)}</h3><span>${state.scores[id]}/10</span></div>
+      <dl><dt>Was fehlt für eine 10</dt><dd>${esc(ans(id, "missing") || "–")}</dd>
+      <dt>Erster Schritt, heute</dt><dd>${esc(ans(id, "step") || "–")}</dd></dl>`;
+    blocks.push(b);
+  });
+  const sig = document.createElement("div");
+  sig.innerHTML = `<p class="rp-eyebrow" style="margin-top:10px">Woran du merkst, dass du auf dem richtigen Weg bist</p><div class="rp-insight"><p>${esc(state.signal.trim() || "–")}</p></div>`;
+  blocks.push(sig);
+
+  let page = null, body = null;
+  const open = () => { page = newPage(); body = document.createElement("div"); body.className = "rp-body"; page.appendChild(body); };
+  open();
+  blocks.forEach(b => {
+    body.appendChild(b);
+    if (body.scrollHeight > body.clientHeight && body.children.length > 1) { body.removeChild(b); open(); body.appendChild(b); }
+  });
+  // Letzte Seite: Abschluss mit Standortgespräch
+  const pc = newPage("rp-cover rp-close"), link = document.getElementById("ctaBtn").href;
+  pc.innerHTML = `<div class="rp-body">
+      <p class="rp-eyebrow">Und jetzt</p>
+      <h2>Drei Bereiche. Ein erster Schritt. Und dann?</h2>
+      <p>Zu wissen, was sich ändern müsste, ist der leichtere Teil. Dranbleiben, wenn der Alltag zurück ist, der schwierigere.</p>
+      <p>Im Standortgespräch schauen wir gemeinsam auf dein Rad und darauf, was dich bisher davon abgehalten hat.</p>
+      <div><a class="rp-btn" data-pdf-link="${link}" href="#">Standortgespräch buchen</a></div>
+      <p class="rp-url">${esc(link.replace(/^https?:\/\/(www\.)?/, ""))} · Kein Druck, keine Verpflichtung.</p>
+      <div class="rp-logo"><img src="assets/rs-logo.png" alt=""><div><b>René Sahm</b><span>Sparringspartner für ambitionierte Führungskräfte im Konzern</span></div></div>
+    </div>`;
+  pages.forEach((pg, i) => pg.insertAdjacentHTML("beforeend", rpFooter(pg, `${i + 1} / ${pages.length}`)));
+  return { stage, pages };
+}
+async function buildReportPdf() {
+  for (const src of LIBS) await loadScript(src);
+  if (document.fonts && document.fonts.ready) await document.fonts.ready;
+  const { stage, pages } = buildReportPages();
+  try {
+    await Promise.all([...stage.querySelectorAll("img")].map(img => img.complete ? null : new Promise(r => { img.onload = img.onerror = r; })));
+    const pdf = new window.jspdf.jsPDF({ unit: "mm", format: "a4", compress: true });
+    const k = 210 / 794;
+    for (let i = 0; i < pages.length; i++) {
+      const pg = pages[i];
+      const canvas = await window.html2canvas(pg, { scale: 2, useCORS: true, backgroundColor: null, logging: false });
+      if (i > 0) pdf.addPage();
+      pdf.addImage(canvas.toDataURL("image/jpeg", 0.9), "JPEG", 0, 0, 210, 297);
+      const base = pg.getBoundingClientRect();
+      pg.querySelectorAll("[data-pdf-link]").forEach(a => {
+        const r = a.getBoundingClientRect();
+        pdf.link((r.left - base.left) * k, (r.top - base.top) * k, r.width * k, r.height * k, { url: a.dataset.pdfLink });
+      });
+    }
+    pdf.setProperties({ title: "Mein Lebensrad", author: "René Sahm", subject: "Persönlicher Report " + dateLabel() });
+    return pdf;
+  } finally { stage.remove(); }
+}
+function pdfFileName() { return `Lebensrad-${state.date || "report"}.pdf`; }
+
 async function sendMail(e) {
   e.preventDefault();
   const status = $("mailStatus"), email = $("email").value.trim();
   status.className = "status";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { status.className = "status err"; status.textContent = "Bitte prüf deine E-Mail-Adresse."; $("email").focus(); return; }
   if (!$("consent").checked) { status.className = "status err"; status.textContent = "Bitte bestätige die Einwilligung, damit wir dir das Ergebnis schicken können."; return; }
-  const payload = buildPayload(email);
   if (!EMAIL_CONFIG.endpoint) {
-    console.info("Lebensrad: E-Mail-Endpunkt fehlt. Payload:", payload);
+    console.info("Lebensrad: E-Mail-Endpunkt fehlt. Payload:", buildPayload(email));
     status.className = "status err";
     status.textContent = "Der E-Mail-Versand wird gerade eingerichtet. Versuch es bitte später noch einmal.";
     return;
   }
-  const btn = $("mailBtn"); btn.disabled = true; status.textContent = "Wird gesendet …";
+  const btn = $("mailBtn"); btn.disabled = true; status.textContent = "Dein Report wird erstellt …";
   try {
+    const payload = buildPayload(email);
+    try {
+      const pdf = await buildReportPdf();
+      payload.pdf_dateiname = pdfFileName();
+      payload.pdf_base64 = pdf.output("datauristring").split(",")[1];
+    } catch (pdfErr) {
+      console.warn("Lebensrad: PDF konnte nicht erstellt werden.", pdfErr);
+      payload.pdf_dateiname = null; payload.pdf_base64 = null;
+    }
+    status.textContent = "Wird gesendet …";
     const res = await fetch(EMAIL_CONFIG.endpoint, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, EMAIL_CONFIG.headers), body: JSON.stringify(payload) });
     if (!res.ok) throw new Error(res.status);
     status.className = "status ok"; status.textContent = "Ist unterwegs. Schau in dein Postfach, notfalls auch in den Spam-Ordner.";
