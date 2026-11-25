@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mein Lebensrad</title>
+<meta name="description" content="Wo stehst du heute? Zwölf Lebensbereiche, jeweils ein Wert von 0 bis 10. Danach vier Reflexionsfragen für die nächsten zwölf Monate.">
+<link rel="icon" type="image/png" href="assets/rs-logo.png">
+<style>
+  @font-face { font-family: "Alexandria"; src: url("fonts/Alexandria-latin-wght.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+  @font-face { font-family: "Roboto"; src: url("fonts/Roboto-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Roboto"; src: url("fonts/Roboto-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+  @font-face { font-family: "Roboto"; src: url("fonts/Roboto-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+
+  /* Tokens aus dem Design-System René Sahm */
+  :root {
+    color-scheme: light;
+    --navy: #1c2a3d; --navy-raised: #22364e; --petrol: #284657; --mittelblau: #3e6f8f;
+    --gruen: #6a8f7a; --gruen-dunkel: #4f6a5c; --gruen-hell: #dce6e4;
+    --hellblau: #d6e4f5; --kuehlweiss: #f5f7fa; --weiss: #ffffff; --amber: #f0a82c;
+    --salbei-hell: #aac4c0;
+    --ink: var(--navy); --ink-body: #2f3845; --ink-muted: #5c6470;
+    --on-dark: var(--kuehlweiss); --on-dark-muted: #d0d8e4;
+    --linie: #d0d4d8; --linie-zitat: #b4bec8; --linie-karte: #e2e4e6; --linie-dunkel: #506074; --focus: var(--mittelblau);
+    --radius-md: 8px; --radius-lg: 10px; --radius-btn: 15px; --radius-pill: 999px;
+    --font-heading: Alexandria, system-ui, sans-serif;
+    --font-body: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--kuehlweiss); color: var(--ink-body); font: 400 16px/24px var(--font-body); -webkit-font-smoothing: antialiased; }
+  button, input, textarea { font: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .hidden { display: none !important; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* Kopfzeile */
+  .topbar { background: var(--weiss); border-bottom: 1px solid var(--linie-karte); }
+  .topbar .wrap { display: flex; align-items: center; gap: 12px; height: 64px; }
+  .topbar img { width: 36px; height: 36px; display: block; }
+  .topbar .who { font-family: var(--font-heading); font-weight: 600; font-size: 16px; color: var(--ink); line-height: 1.2; }
+  .topbar .role { display: block; font-family: var(--font-body); font-weight: 400; font-size: 13px; color: var(--ink-muted); }
+
+  /* Typo */
+  .eyebrow { font: 700 13px/16px var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--gruen-dunkel); margin: 0 0 12px; }
+  .h-display { font-family: var(--font-heading); font-weight: 600; font-size: clamp(32px, 7vw, 48px); line-height: 1.08; color: var(--ink); margin: 0 0 18px; }
+  .h-section { font-family: var(--font-heading); font-weight: 600; font-size: clamp(26px, 5vw, 34px); line-height: 1.15; color: var(--ink); margin: 0 0 12px; }
+  .h-title { font-family: var(--font-heading); font-weight: 600; font-size: 21px; line-height: 1.25; color: var(--petrol); margin: 0; }
+  .lead { font: 400 18px/27px var(--font-body); color: var(--petrol); margin: 0 0 14px; }
+  .muted { color: var(--ink-muted); font-size: 15px; }
+  p { margin: 0 0 14px; }
+
+  /* Hero auf navy */
+  .hero { position: relative; overflow: hidden; background: var(--navy); color: var(--on-dark); padding: 64px 0 56px; }
+  .hero::before { content: ""; position: absolute; width: 320px; height: 320px; border-radius: 50%; background: var(--navy-raised); top: -110px; right: -90px; }
+  .hero .wrap { position: relative; }
+  .hero .eyebrow { color: var(--amber); }
+  .hero .h-display, .hero .h-section { color: var(--on-dark); }
+  .hero .lead { color: var(--on-dark-muted); }
+  .facts { list-style: none; margin: 22px 0 30px; padding: 20px 0 0; border-top: 1px solid var(--linie-dunkel); display: grid; gap: 8px; color: var(--on-dark-muted); font-size: 15px; }
+  .facts li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; }
+  .facts svg { width: 18px; height: 18px; margin-top: 3px; fill: none; stroke: var(--amber); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .hero :focus-visible { outline-color: var(--amber); }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: var(--radius-btn);
+    padding: 15px 22px; font: 600 19px/1.3 var(--font-heading); text-decoration: none; }
+  .btn-primary { background: var(--gruen); color: var(--weiss); }
+  .btn-primary:hover { background: var(--gruen-dunkel); }
+  .btn-primary[disabled] { background: var(--linie); color: var(--ink-muted); cursor: not-allowed; }
+  .btn-secondary { background: var(--navy); color: var(--on-dark); font-size: 16px; font-weight: 500; padding: 14px 20px; }
+  .btn-secondary:hover { background: var(--petrol); }
+  .btn-ghost { background: none; border: 0; color: var(--ink-muted); padding: 8px 0; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; }
+  .btn-ghost:hover { color: var(--ink); }
+  .btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .section { padding: 40px 0 56px; }
+  .card { background: var(--weiss); border: 1px solid var(--linie-karte); border-radius: var(--radius-lg); padding: 28px; }
+  .stack > * + * { margin-top: 16px; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 28px; }
+
+  /* Rad */
+  .wheel-card { padding: 20px 12px 12px; }
+  .wheel { display: block; width: 100%; max-width: 600px; margin: 0 auto; user-select: none; -webkit-user-select: none; }
+  .wheel.interactive { cursor: crosshair; touch-action: pan-y; }
+  .wheel .ring { fill: none; stroke: var(--linie-karte); stroke-width: 1; }
+  .wheel .ring.mid { stroke: var(--linie-zitat); }
+  .wheel .ring.outer { stroke: var(--linie-zitat); stroke-width: 1.5; }
+  .wheel .spoke { stroke: var(--linie-zitat); stroke-width: 1; }
+  .wheel .sector { fill: var(--hellblau); opacity: .45; }
+  .wheel .bar { stroke: var(--mittelblau); stroke-width: 5; stroke-linecap: round; opacity: .35; }
+  .wheel .area { fill: var(--mittelblau); fill-opacity: .18; stroke: var(--mittelblau); stroke-width: 2.5; stroke-linejoin: round; }
+  .wheel .dot { fill: var(--navy); stroke: var(--weiss); stroke-width: 2; }
+  .wheel .lbl { font: 600 15px var(--font-heading); fill: var(--ink); }
+  .wheel .lbl .val { fill: var(--mittelblau); }
+  .wheel .lbl .open { fill: var(--ink-muted); font-weight: 400; }
+  .wheel .lbl.focus { fill: var(--gruen-dunkel); }
+  .wheel .grp { font: 700 11.5px var(--font-body); letter-spacing: .1em; fill: var(--ink-muted); }
+  .wheel .tick { font: 400 10px var(--font-body); fill: var(--ink-muted); }
+  .wheel .hover-spoke { stroke: var(--mittelblau); stroke-width: 2; opacity: 0; }
+  .wheel .hover-spoke.on { opacity: .6; }
+  @media (max-width: 560px) { .wheel .grp { display: none; } .wheel .lbl { font-size: 23px; } .wheel .tick { font-size: 14px; } }
+
+  .scale-note { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin: 14px 4px 0; font-size: 14px; color: var(--ink-muted); }
+  .date-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .date-row label { font: 700 13px/16px var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-muted); }
+  input[type=date], input[type=email], textarea {
+    border: 1px solid var(--linie); border-radius: var(--radius-md); background: var(--weiss); color: var(--ink); padding: 10px 12px; }
+  input[type=date]:focus, input[type=email]:focus, textarea:focus { border-color: var(--mittelblau); outline: none; box-shadow: 0 0 0 2px var(--hellblau); }
+
+  /* Reglerliste */
+  .groups { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .group h3 { margin: 0 0 6px; }
+  .row { display: grid; grid-template-columns: 1fr 34px; align-items: center; gap: 4px 12px; padding: 10px 0; border-top: 1px solid var(--linie-karte); }
+  .row:first-of-type { border-top: 0; }
+  .row label { font: 500 15px/1.3 var(--font-body); color: var(--ink); }
+  .row output { font: 600 18px/1 var(--font-heading); color: var(--mittelblau); text-align: right; }
+  .row output.open { color: var(--ink-muted); font-weight: 400; }
+  .row input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--mittelblau); margin: 4px 0 0; }
+  .row.unset input[type=range] { opacity: .45; }
+  @media (max-width: 640px) { .groups { grid-template-columns: 1fr; } .card { padding: 22px 18px; } }
+
+  /* Reflexion */
+  .q-num { font: 600 15px/1 var(--font-heading); color: var(--mittelblau); margin: 0 0 8px; letter-spacing: .02em; }
+  .q-title { font-family: var(--font-heading); font-weight: 500; font-size: clamp(20px, 4.4vw, 24px); line-height: 1.3; color: var(--ink); margin: 0 0 8px; }
+  .chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-top: 18px; }
+  .chip { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; background: var(--weiss); color: var(--ink);
+    border: 1px solid var(--linie); border-radius: var(--radius-md); padding: 12px 14px; font-size: 15px; transition: border-color .15s, background .15s; }
+  .chip:hover { border-color: var(--mittelblau); }
+  .chip[aria-pressed=true] { border-color: var(--navy); background: var(--hellblau); }
+  .chip .sc { font: 600 16px/1 var(--font-heading); color: var(--mittelblau); }
+  .chip[aria-pressed=true] .sc { color: var(--navy); }
+  .chip[disabled] { opacity: .45; cursor: not-allowed; }
+  .counter { margin-top: 12px; font-size: 14px; color: var(--ink-muted); }
+  .focus-card { border-left: 3px solid var(--gruen); }
+  .focus-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 18px; }
+  .focus-head .score { font: 600 28px/1 var(--font-heading); color: var(--mittelblau); white-space: nowrap; }
+  .focus-head .score small { font: 400 14px var(--font-body); color: var(--ink-muted); }
+  .field { display: block; }
+  .field + .field { margin-top: 18px; }
+  .field span { display: block; font: 500 15px/1.4 var(--font-body); color: var(--ink); margin-bottom: 8px; }
+  .field span em { font-style: normal; color: var(--mittelblau); font-weight: 700; margin-right: 6px; }
+  textarea { width: 100%; min-height: 92px; resize: vertical; line-height: 1.5; }
+
+  /* Ergebnis */
+  .result-list { display: grid; gap: 12px; }
+  .res { background: var(--weiss); border: 1px solid var(--linie-karte); border-radius: var(--radius-lg); padding: 22px 24px; display: grid; grid-template-columns: 72px 1fr; gap: 18px; }
+  .res .n { font: 600 34px/1 var(--font-heading); color: var(--mittelblau); }
+  .res .n small { display: block; margin-top: 6px; font: 700 12px/16px var(--font-body); letter-spacing: .12em; text-transform: uppercase; }
+  .res dl { margin: 10px 0 0; }
+  .res dt { font: 700 12px/16px var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--gruen-dunkel); margin-top: 12px; }
+  .res dd { margin: 4px 0 0; white-space: pre-wrap; }
+  .empty { color: var(--ink-muted); font-style: italic; }
+  .insight { border-left: 3px solid var(--gruen); padding: 2px 0 2px 20px; margin: 28px 0 0; }
+  .insight p:last-child { margin: 0; white-space: pre-wrap; }
+  .callout { background: var(--gruen-hell); border-left: 4px solid var(--gruen); border-radius: var(--radius-lg); padding: 24px 28px; color: var(--ink); }
+  .mail-form { display: grid; gap: 14px; margin-top: 16px; }
+  .mail-form input[type=email] { width: 100%; max-width: 420px; }
+  .consent { display: grid; grid-template-columns: 22px 1fr; gap: 10px; font-size: 14px; line-height: 1.5; color: var(--ink-body); }
+  .consent input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--navy); }
+  .status { font-size: 15px; margin: 0; }
+  .status.err { color: #7a1c1e; }
+  .status.ok { color: var(--gruen-dunkel); font-weight: 500; }
+
+  .cta { margin-top: 0; }
+  .cta .note { color: var(--on-dark-muted); font-size: 15px; margin: 14px 0 0; }
+
+  footer { border-top: 1px solid var(--linie); }
+  footer .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 20px; padding-bottom: 28px;
+    font: 400 12px/16px var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-muted); }
+  footer img { width: 28px; height: 28px; display: block; }
+  @media (max-width: 480px) { .res .n small { display: inline; margin-left: 6px; } .res { grid-template-columns: 1fr; gap: 6px; padding: 18px; } .actions .btn { width: 100%; } }
+
+  @media print {
+    .topbar, .no-print, .cta, footer { display: none !important; }
+    body { background: #fff; }
+    .section { padding: 12px 0; }
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <img src="assets/rs-logo.png" alt="RS Logo">
+    <div class="who">René Sahm<span class="role">Sparringspartner für Top-Führungskräfte</span></div>
+  </div>
+</header>
+
+<main>
+<!-- Start -->
+<section id="intro" class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Mein Lebensrad</p>
+    <h1 class="h-display">Wo stehst du heute?</h1>
+    <p class="lead">Zwölf Bereiche deines Lebens. Für jeden ein Wert von 0 bis 10. Ehrlich, nicht geschönt.</p>
+    <p class="lead">Das Bild, das daraus entsteht, ist eine Momentaufnahme. Kein Urteil. Danach wählst du drei Bereiche für die nächsten zwölf Monate und legst fest, was du heute schon tun kannst.</p>
+    <ul class="facts">
+      <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>12 Bereiche, danach 4 Reflexionsfragen. Etwa 15 Minuten.</span></li>
+      <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Dein Ergebnis kannst du dir am Ende per E-Mail schicken.</span></li>
+      <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Deine Angaben bleiben in deinem Browser, bis du sie selbst verschickst.</span></li>
+    </ul>
+    <button class="btn btn-primary" id="startBtn" type="button">Lebensrad starten
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  </div>
+</section>
+
+<!-- Schritt 1: Werte -->
+<section id="step-wheel" class="section hidden" aria-labelledby="wheelTitle">
+  <div class="wrap">
+    <p class="eyebrow">Schritt 1 von 3</p>
+    <h2 class="h-section" id="wheelTitle">Markiere deine Werte</h2>
+    <p class="lead">Tippe auf eine Speiche, zieh am Rad oder nutze die Regler darunter. Nimm den ersten Wert, der dir einfällt.</p>
+
+    <div class="card wheel-card">
+      <svg id="wheel" class="wheel interactive" viewBox="-330 -310 660 620" role="img" aria-label="Lebensrad mit zwölf Speichen"></svg>
+      <div class="scale-note"><span>0 = sehr unzufrieden · 10 = sehr zufrieden</span>
+        <span class="date-row"><label for="date">Datum</label><input type="date" id="date"></span></div>
+    </div>
+
+    <div class="groups" id="sliders"></div>
+
+    <div class="actions">
+      <button class="btn-ghost" type="button" id="resetBtn">Alles zurücksetzen</button>
+      <button class="btn btn-primary" type="button" id="toReflectBtn" disabled>Weiter zur Reflexion</button>
+    </div>
+  </div>
+</section>
+
+<!-- Schritt 2: Reflexion -->
+<section id="step-reflect" class="section hidden" aria-labelledby="reflectTitle">
+  <div class="wrap stack">
+    <div>
+      <p class="eyebrow">Schritt 2 von 3</p>
+      <h2 class="h-section" id="reflectTitle">Reflexion</h2>
+      <p class="lead">Das Rad zeigt, wo du stehst. Die Fragen klären, wohin du willst.</p>
+    </div>
+
+    <div class="card">
+      <p class="q-num">01</p>
+      <h3 class="q-title">Auf welche drei Bereiche will ich mich in den nächsten 12 Monaten fokussieren?</h3>
+      <p class="muted">Nicht zwingend die niedrigsten Werte. Die Bereiche, in denen eine Veränderung am meisten bewegt.</p>
+      <div class="chips" id="chips" role="group" aria-label="Fokusbereiche wählen"></div>
+      <p class="counter" id="counter" aria-live="polite"></p>
+    </div>
+
+    <div id="focusCards" class="stack"></div>
+
+    <div class="card">
+      <p class="q-num">04</p>
+      <h3 class="q-title"><label for="signal">Wann spüre ich, dass ich auf dem richtigen Weg bin?</label></h3>
+      <p class="muted">Woran merkst du es im Alltag? Eine Situation, ein Gefühl, ein Moment in der Woche.</p>
+      <textarea id="signal" rows="4"></textarea>
+    </div>
+
+    <div class="actions">
+      <button class="btn-ghost" type="button" id="backToWheelBtn">Zurück zu den Werten</button>
+      <button class="btn btn-primary" type="button" id="toResultBtn" disabled>Ergebnis ansehen</button>
+    </div>
+  </div>
+</section>
+
+<!-- Schritt 3: Ergebnis -->
+<section id="step-result" class="section hidden" aria-labelledby="resultTitle">
+  <div class="wrap stack">
+    <div>
+      <p class="eyebrow">Schritt 3 von 3</p>
+      <h2 class="h-section" id="resultTitle">Dein Lebensrad</h2>
+      <p class="lead" id="resultDate"></p>
+    </div>
+
+    <div class="card wheel-card">
+      <svg id="wheelResult" class="wheel" viewBox="-330 -310 660 620" role="img" aria-label="Dein ausgefülltes Lebensrad"></svg>
+    </div>
+
+    <div>
+      <p class="eyebrow" style="margin-top:16px">Deine Fokusbereiche für die nächsten 12 Monate</p>
+      <div class="result-list" id="resultList"></div>
+      <div class="insight">
+        <p class="eyebrow">Woran du merkst, dass du auf dem richtigen Weg bist</p>
+        <p id="resultSignal"></p>
+      </div>
+    </div>
+
+    <div class="callout no-print" id="mailBox">
+      <p class="eyebrow">Ergebnis sichern</p>
+      <h3 class="h-title" style="color:var(--ink)">Schick dir dein Lebensrad per E-Mail</h3>
+      <p style="margin:8px 0 0">Dann hast du es in ein paar Wochen wieder vor dir. Und kannst vergleichen.</p>
+      <form class="mail-form" id="mailForm" novalidate>
+        <label class="sr-only" for="email">E-Mail-Adresse</label>
+        <input type="email" id="email" name="email" autocomplete="email" placeholder="deine@e-mail.de" required>
+        <label class="consent"><input type="checkbox" id="consent" required>
+          <span>Ich bin einverstanden, dass meine E-Mail-Adresse und meine Angaben verarbeitet werden, um mir mein Ergebnis zu schicken.</span></label>
+        <div><button class="btn btn-secondary" type="submit" id="mailBtn">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          Ergebnis per E-Mail senden</button></div>
+        <p class="status" id="mailStatus" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <div class="actions no-print">
+      <button class="btn-ghost" type="button" id="backToReflectBtn">Antworten bearbeiten</button>
+      <button class="btn-ghost" type="button" id="restartBtn">Neu beginnen</button>
+    </div>
+  </div>
+</section>
+
+<!-- Angebot -->
+<section id="cta" class="hero cta hidden" aria-labelledby="ctaTitle">
+  <div class="wrap">
+    <p class="eyebrow">Und jetzt</p>
+    <h2 class="h-section" id="ctaTitle">Drei Bereiche. Ein erster Schritt. Und dann?</h2>
+    <p class="lead">Zu wissen, was sich ändern müsste, ist der leichtere Teil. Dranbleiben, wenn der Alltag zurück ist, der schwierigere.</p>
+    <p class="lead">Im Standortgespräch schauen wir gemeinsam auf dein Rad und darauf, was dich bisher davon abgehalten hat.</p>
+    <a class="btn btn-primary" id="ctaBtn" href="https://www.renesahm.de/widget/bookings/standort-call" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/></svg>
+      Standortgespräch buchen</a>
+    <p class="note">Kein Druck, keine Verpflichtung.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <img src="assets/rs-logo.png" alt="">
+    <span>renesahm.de | © René Sahm</span>
+  </div>
+</footer>
+
+<script>
+/* ------------------------------------------------------------------
+   E-MAIL-VERSAND
+   Die Seite selbst verschickt keine E-Mails. Trag hier den Endpunkt
+   deines Versanddienstes ein (z. B. Brevo, Make, Zapier, n8n, eigenes
+   Backend). Die Seite schickt per POST ein JSON-Objekt dorthin; den
+   Aufbau beschreibt die README. Leer = Versand noch nicht angebunden.
+------------------------------------------------------------------- */
+const EMAIL_CONFIG = {
+  endpoint: "",          // z. B. "https://hook.eu1.make.com/xxxx"
+  headers: {}            // optionale Zusatz-Header
+};
+
+const AREAS = [
+  { id: "familie",       name: "Familie",        group: "umfeld" },
+  { id: "lebensfreude",  name: "Lebensfreude",   group: "geist" },
+  { id: "sinn",          name: "Sinn/Erfüllung", group: "geist" },
+  { id: "entspannung",   name: "Entspannung",    group: "geist" },
+  { id: "gesundheit",    name: "Gesundheit",     group: "koerper" },
+  { id: "fitness",       name: "Körper/Fitness", group: "koerper" },
+  { id: "ernaehrung",    name: "Ernährung",      group: "koerper" },
+  { id: "beruf",         name: "Beruf",          group: "beruf" },
+  { id: "finanzen",      name: "Geld/Finanzen",  group: "beruf" },
+  { id: "sicherheit",    name: "Sicherheit",     group: "beruf" },
+  { id: "freunde",       name: "Freunde",        group: "umfeld" },
+  { id: "partnerschaft", name: "Partnerschaft",  group: "umfeld" }
+];
+const GROUPS = {
+  umfeld:  { name: "Umfeld und Beziehungen", order: ["familie", "partnerschaft", "freunde"], mid: 330 },
+  geist:   { name: "Geist und Erfüllung",    order: ["lebensfreude", "sinn", "entspannung"], mid: 60 },
+  koerper: { name: "Körper und Gesundheit",  order: ["gesundheit", "fitness", "ernaehrung"], mid: 150 },
+  beruf:   { name: "Beruf und Finanzen",     order: ["beruf", "finanzen", "sicherheit"], mid: 240 }
+};
+const GROUP_LIST = ["umfeld", "geist", "koerper", "beruf"];
+const mq = window.matchMedia("(max-width: 560px)");
+let R = 190, STEP = R / 10;
+const N = AREAS.length;
+function setRadius() { R = mq.matches ? 135 : 190; STEP = R / 10; }
+setRadius();
+const STORE_KEY = "lebensrad-v1";
+const $ = (id) => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+
+function blankState() {
+  return { step: "intro", date: new Date().toISOString().slice(0, 10), scores: {}, focus: [], answers: {}, signal: "" };
+}
+let state = load();
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(STORE_KEY)); if (s && s.scores) return Object.assign(blankState(), s); } catch (e) {}
+  return blankState();
+}
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+const area = (id) => AREAS.find(a => a.id === id);
+const isSet = (id) => Number.isInteger(state.scores[id]);
+const allSet = () => AREAS.every(a => isSet(a.id));
+const pt = (deg, r) => { const t = deg * Math.PI / 180; return [r * Math.sin(t), -r * Math.cos(t)]; };
+const fmt = (n) => Math.round(n * 10) / 10;
+
+/* ---------- Rad zeichnen ---------- */
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function sectorPath(a0, a1, r) {
+  const [x0, y0] = pt(a0, r), [x1, y1] = pt(a1, r);
+  return `M0 0 L${x0} ${y0} A${r} ${r} 0 0 1 ${x1} ${y1} Z`;
+}
+function drawWheel(svg, opts) {
+  svg.textContent = "";
+  svg.setAttribute("viewBox", mq.matches ? "-330 -200 660 400" : "-330 -310 660 620");
+  const highlight = opts && opts.highlight || [];
+  // Sektoren der vier Bereiche, abwechselnd getönt
+  el("path", { d: sectorPath(15, 105, R), class: "sector" }, svg);
+  el("path", { d: sectorPath(195, 285, R), class: "sector" }, svg);
+  for (let i = 1; i <= 10; i++) el("circle", { r: i * STEP, class: "ring" + (i === 5 ? " mid" : "") + (i === 10 ? " outer" : "") }, svg);
+  AREAS.forEach((a, i) => { const [x, y] = pt(i * 30, R); el("line", { x1: 0, y1: 0, x2: x, y2: y, class: "spoke" }, svg); });
+  [5, 10].forEach(v => { const t = el("text", { x: 4, y: -v * STEP - 3, class: "tick" }, svg); t.textContent = v; });
+  if (opts && opts.interactive) el("line", { id: "hoverSpoke", class: "hover-spoke", x1: 0, y1: 0, x2: 0, y2: 0 }, svg);
+
+  // Werte
+  AREAS.forEach((a, i) => {
+    if (!isSet(a.id)) return;
+    const [x, y] = pt(i * 30, state.scores[a.id] * STEP);
+    el("line", { x1: 0, y1: 0, x2: x, y2: y, class: "bar" }, svg);
+  });
+  if (allSet()) {
+    el("polygon", { class: "area", points: AREAS.map((a, i) => pt(i * 30, state.scores[a.id] * STEP).join(",")).join(" ") }, svg);
+  }
+  AREAS.forEach((a, i) => {
+    if (!isSet(a.id)) return;
+    const [x, y] = pt(i * 30, state.scores[a.id] * STEP);
+    el("circle", { cx: x, cy: y, r: 6, class: "dot" }, svg);
+  });
+
+  // Beschriftung
+  AREAS.forEach((a, i) => {
+    const deg = i * 30, [x, y] = pt(deg, R + 18);
+    const anchor = Math.abs(x) < 5 ? "middle" : (x > 0 ? "start" : "end");
+    const dy = Math.abs(x) < 5 ? (y < 0 ? -4 : (mq.matches ? 22 : 16)) : (mq.matches ? 8 : 5);
+    const t = el("text", { x, y: y + dy, "text-anchor": anchor, class: "lbl" + (highlight.includes(a.id) ? " focus" : "") }, svg);
+    t.appendChild(document.createTextNode(a.name + " "));
+    const v = el("tspan", { class: isSet(a.id) ? "val" : "open" }, t);
+    v.textContent = isSet(a.id) ? state.scores[a.id] : "–";
+  });
+  const corners = { umfeld: [-322, -292, "start"], geist: [322, -292, "end"], koerper: [322, 302, "end"], beruf: [-322, 302, "start"] };
+  GROUP_LIST.forEach(g => {
+    const [x, y, anchor] = corners[g];
+    const t = el("text", { x, y, "text-anchor": anchor, class: "grp" }, svg);
+    t.textContent = GROUPS[g].name.toUpperCase();
+  });
+}
+
+/* ---------- Interaktion am Rad ---------- */
+function svgPoint(svg, evt) {
+  const p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+  return p.matrixTransform(svg.getScreenCTM().inverse());
+}
+function spokeAt(x, y) {
+  let deg = Math.atan2(x, -y) * 180 / Math.PI; if (deg < 0) deg += 360;
+  return Math.round(deg / 30) % N;
+}
+function setupWheelInput() {
+  const svg = $("wheel");
+  let active = null;
+  const apply = (evt, idx) => {
+    const p = svgPoint(svg, evt);
+    const d = Math.hypot(p.x, p.y);
+    if (idx === null) { if (d > R + 24) return null; idx = spokeAt(p.x, p.y); }
+    const v = Math.max(0, Math.min(10, Math.round(d / STEP)));
+    setScore(AREAS[idx].id, v);
+    return idx;
+  };
+  svg.addEventListener("pointerdown", (e) => {
+    const idx = apply(e, null);
+    if (idx !== null) { active = idx; try { svg.setPointerCapture(e.pointerId); } catch (_) {} }
+  });
+  svg.addEventListener("pointermove", (e) => {
+    if (active !== null) { apply(e, active); return; }
+    const p = svgPoint(svg, e), h = $("hoverSpoke");
+    if (!h) return;
+    if (Math.hypot(p.x, p.y) > R + 24) { h.classList.remove("on"); return; }
+    const [x, y] = pt(spokeAt(p.x, p.y) * 30, R);
+    h.setAttribute("x2", x); h.setAttribute("y2", y); h.classList.add("on");
+  });
+  const end = () => { active = null; };
+  svg.addEventListener("pointerup", end);
+  svg.addEventListener("pointercancel", end);
+  svg.addEventListener("pointerleave", () => { const h = $("hoverSpoke"); if (h) h.classList.remove("on"); });
+}
+
+/* ---------- Regler ---------- */
+function buildSliders() {
+  const box = $("sliders"); box.textContent = "";
+  GROUP_LIST.forEach(g => {
+    const card = document.createElement("div"); card.className = "card group";
+    card.innerHTML = `<h3 class="eyebrow">${GROUPS[g].name}</h3>`;
+    GROUPS[g].order.forEach(id => {
+      const a = area(id), row = document.createElement("div");
+      row.className = "row"; row.dataset.id = id;
+      row.innerHTML = `<label for="r-${id}">${a.name}</label><output id="o-${id}" for="r-${id}"></output>
+        <input type="range" id="r-${id}" min="0" max="10" step="1">`;
+      const input = row.querySelector("input");
+      input.addEventListener("input", () => setScore(id, +input.value));
+      card.appendChild(row);
+    });
+    box.appendChild(card);
+  });
+}
+function syncSliders() {
+  AREAS.forEach(a => {
+    const row = document.querySelector(`.row[data-id="${a.id}"]`); if (!row) return;
+    const input = row.querySelector("input"), out = row.querySelector("output");
+    if (isSet(a.id)) { input.value = state.scores[a.id]; out.textContent = state.scores[a.id]; out.className = ""; row.classList.remove("unset"); input.setAttribute("aria-valuetext", state.scores[a.id] + " von 10"); }
+    else { input.value = 5; out.textContent = "–"; out.className = "open"; row.classList.add("unset"); input.setAttribute("aria-valuetext", "noch nicht bewertet"); }
+  });
+  const open = AREAS.filter(a => !isSet(a.id)).length, btn = $("toReflectBtn");
+  btn.disabled = open > 0;
+  btn.textContent = open > 0 ? (open === 1 ? "Noch 1 Bereich offen" : `Noch ${open} Bereiche offen`) : "Weiter zur Reflexion";
+}
+function setScore(id, v) {
+  if (state.scores[id] === v) return;
+  state.scores[id] = v; save();
+  drawWheel($("wheel"), { interactive: true });
+  syncSliders();
+}
+
+/* ---------- Reflexion ---------- */
+function buildChips() {
+  const box = $("chips"); box.textContent = "";
+  AREAS.slice().sort((a, b) => state.scores[a.id] - state.scores[b.id]).forEach(a => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.dataset.id = a.id;
+    b.innerHTML = `<span>${a.name}</span><span class="sc">${state.scores[a.id]}</span>`;
+    b.addEventListener("click", () => toggleFocus(a.id));
+    box.appendChild(b);
+  });
+  syncChips();
+}
+function syncChips() {
+  const full = state.focus.length >= 3;
+  document.querySelectorAll(".chip").forEach(b => {
+    const on = state.focus.includes(b.dataset.id);
+    b.setAttribute("aria-pressed", on);
+    b.disabled = full && !on;
+  });
+  const n = state.focus.length;
+  $("counter").textContent = n === 3 ? "3 von 3 gewählt." : `${n} von 3 gewählt.`;
+  $("toResultBtn").disabled = n !== 3;
+  $("toResultBtn").textContent = n === 3 ? "Ergebnis ansehen" : "Erst drei Bereiche wählen";
+}
+function toggleFocus(id) {
+  if (state.focus.includes(id)) state.focus = state.focus.filter(f => f !== id);
+  else if (state.focus.length < 3) state.focus.push(id);
+  save(); syncChips(); buildFocusCards();
+}
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function buildFocusCards() {
+  const box = $("focusCards"); box.textContent = "";
+  state.focus.forEach((id, i) => {
+    const a = area(id), ans = state.answers[id] || {};
+    const c = document.createElement("div"); c.className = "card focus-card";
+    c.innerHTML = `
+      <div class="focus-head"><div><p class="q-num">Fokus ${i + 1}</p><h3 class="h-title">${a.name}</h3></div>
+        <div class="score">${state.scores[id]}<small> / 10</small></div></div>
+      <label class="field"><span><em>02</em>Was fehlt mir in diesem Bereich für eine 10?</span>
+        <textarea data-id="${id}" data-k="missing" rows="3"></textarea></label>
+      <label class="field"><span><em>03</em>Was ist ein konkreter erster Schritt, den ich heute umsetzen kann?</span>
+        <textarea data-id="${id}" data-k="step" rows="3"></textarea></label>`;
+    c.querySelectorAll("textarea").forEach(t => {
+      t.value = ans[t.dataset.k] || "";
+      t.addEventListener("input", () => {
+        state.answers[id] = Object.assign({}, state.answers[id], { [t.dataset.k]: t.value }); save();
+      });
+    });
+    box.appendChild(c);
+  });
+}
+
+/* ---------- Ergebnis ---------- */
+function dateLabel() {
+  if (!state.date) return "";
+  const d = new Date(state.date + "T12:00:00");
+  return isNaN(d) ? state.date : d.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
+}
+function buildResult() {
+  drawWheel($("wheelResult"), { highlight: state.focus });
+  $("resultDate").textContent = "Momentaufnahme vom " + dateLabel() + ".";
+  const list = $("resultList"); list.textContent = "";
+  state.focus.forEach(id => {
+    const a = area(id), ans = state.answers[id] || {};
+    const val = (s) => s && s.trim() ? esc(s.trim()) : `<span class="empty">Noch offen.</span>`;
+    const d = document.createElement("div"); d.className = "res";
+    d.innerHTML = `<div class="n">${state.scores[id]}<small>von 10</small></div>
+      <div><h3 class="h-title">${a.name}</h3><dl>
+        <dt>Was fehlt für eine 10</dt><dd>${val(ans.missing)}</dd>
+        <dt>Erster Schritt, heute</dt><dd>${val(ans.step)}</dd></dl></div>`;
+    list.appendChild(d);
+  });
+  $("resultSignal").innerHTML = state.signal.trim() ? esc(state.signal.trim()) : `<span class="empty">Noch offen.</span>`;
+}
+
+/* ---------- E-Mail ---------- */
+function buildPayload(email) {
+  const scores = AREAS.map(a => ({ id: a.id, bereich: a.name, oberbereich: GROUPS[a.group].name, wert: state.scores[a.id] }));
+  const fokus = state.focus.map(id => ({
+    id, bereich: area(id).name, wert: state.scores[id],
+    was_fehlt: (state.answers[id] && state.answers[id].missing || "").trim(),
+    erster_schritt: (state.answers[id] && state.answers[id].step || "").trim()
+  }));
+  const signal = state.signal.trim();
+  const lines = [
+    `Mein Lebensrad – ${dateLabel()}`, "",
+    "MEINE WERTE (0 = sehr unzufrieden, 10 = sehr zufrieden)",
+    ...GROUP_LIST.flatMap(g => [GROUPS[g].name.toUpperCase(), ...GROUPS[g].order.map(id => `  ${area(id).name}: ${state.scores[id]}`)]),
+    "", "MEINE DREI FOKUSBEREICHE FÜR DIE NÄCHSTEN 12 MONATE",
+    ...fokus.flatMap((f, i) => ["", `${i + 1}. ${f.bereich} (${f.wert}/10)`, `   Was fehlt für eine 10: ${f.was_fehlt || "–"}`, `   Erster Schritt, heute: ${f.erster_schritt || "–"}`]),
+    "", "WORAN ICH MERKE, DASS ICH AUF DEM RICHTIGEN WEG BIN", signal || "–"
+  ];
+  const svg = $("wheelResult").cloneNode(true);
+  svg.setAttribute("xmlns", NS); svg.setAttribute("width", "600"); svg.setAttribute("height", "564");
+  return {
+    email, einwilligung: true, datum: state.date, datum_text: dateLabel(),
+    werte: scores, fokus, signal,
+    text: lines.join("\n"),
+    html: buildHtmlMail(fokus, signal),
+    rad_svg: inlineSvgStyles(svg).outerHTML,
+    quelle: location.href
+  };
+}
+function buildHtmlMail(fokus, signal) {
+  const c = { navy: "#1c2a3d", petrol: "#284657", mb: "#3e6f8f", gd: "#4f6a5c", kw: "#f5f7fa", hb: "#d6e4f5", ink: "#2f3845", muted: "#5c6470", line: "#e2e4e6" };
+  const eb = (t) => `<p style="margin:24px 0 8px;font:700 12px/16px Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:${c.gd}">${t}</p>`;
+  const rows = GROUP_LIST.map(g => `<tr><td colspan="2" style="padding:12px 0 4px;font:700 11px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:${c.muted}">${GROUPS[g].name}</td></tr>` +
+    GROUPS[g].order.map(id => {
+      const v = state.scores[id];
+      return `<tr><td style="padding:4px 12px 4px 0;font:15px Arial,sans-serif;color:${c.navy};width:140px">${esc(area(id).name)}</td>
+        <td style="padding:4px 0"><table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>
+        <td style="width:${v * 10}%;background:${c.mb};height:8px;border-radius:4px;font-size:0">&nbsp;</td>
+        <td style="background:${c.hb};height:8px;font-size:0">&nbsp;</td>
+        <td style="width:36px;text-align:right;font:bold 15px Arial,sans-serif;color:${c.mb}">${v}</td></tr></table></td></tr>`;
+    }).join("")).join("");
+  const focusHtml = fokus.map((f, i) => `<div style="background:#fff;border:1px solid ${c.line};border-left:3px solid #6a8f7a;border-radius:10px;padding:18px 20px;margin:0 0 12px">
+      <p style="margin:0 0 10px;font:bold 18px Arial,sans-serif;color:${c.petrol}">${i + 1}. ${esc(f.bereich)} <span style="color:${c.mb}">${f.wert}/10</span></p>
+      <p style="margin:0 0 4px;font:bold 12px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:${c.gd}">Was fehlt für eine 10</p>
+      <p style="margin:0 0 12px;font:15px/1.5 Arial,sans-serif;color:${c.ink};white-space:pre-wrap">${esc(f.was_fehlt || "–")}</p>
+      <p style="margin:0 0 4px;font:bold 12px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:${c.gd}">Erster Schritt, heute</p>
+      <p style="margin:0;font:15px/1.5 Arial,sans-serif;color:${c.ink};white-space:pre-wrap">${esc(f.erster_schritt || "–")}</p></div>`).join("");
+  return `<div style="background:${c.kw};padding:24px 16px"><div style="max-width:600px;margin:0 auto">
+    <p style="margin:0 0 6px;font:700 12px/16px Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:${c.gd}">Mein Lebensrad</p>
+    <h1 style="margin:0 0 6px;font:bold 28px/1.15 Arial,sans-serif;color:${c.navy}">Momentaufnahme vom ${esc(dateLabel())}</h1>
+    ${eb("Meine Werte (0 = sehr unzufrieden, 10 = sehr zufrieden)")}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%">${rows}</table>
+    ${eb("Meine drei Fokusbereiche für die nächsten 12 Monate")}${focusHtml}
+    ${eb("Woran ich merke, dass ich auf dem richtigen Weg bin")}
+    <p style="margin:0;font:15px/1.5 Arial,sans-serif;color:${c.ink};white-space:pre-wrap">${esc(signal || "–")}</p>
+    <p style="margin:32px 0 0;font:12px Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:${c.muted}">renesahm.de | © René Sahm</p>
+  </div></div>`;
+}
+function inlineSvgStyles(svg) {
+  // E-Mail-Programme kennen die Seiten-CSS nicht: Farben direkt an die Elemente schreiben.
+  const map = {
+    ring: { fill: "none", stroke: "#e2e4e6" }, spoke: { stroke: "#b4bec8" }, sector: { fill: "#d6e4f5", "fill-opacity": ".45" },
+    bar: { stroke: "#3e6f8f", "stroke-width": "5", "stroke-linecap": "round", "stroke-opacity": ".35" },
+    area: { fill: "#3e6f8f", "fill-opacity": ".18", stroke: "#3e6f8f", "stroke-width": "2.5" },
+    dot: { fill: "#1c2a3d", stroke: "#fff", "stroke-width": "2" },
+    lbl: { "font-family": "Arial, sans-serif", "font-size": "15", "font-weight": "bold", fill: "#1c2a3d" },
+    grp: { "font-family": "Arial, sans-serif", "font-size": "11.5", "font-weight": "bold", fill: "#5c6470" },
+    tick: { "font-family": "Arial, sans-serif", "font-size": "10", fill: "#5c6470" },
+    val: { fill: "#3e6f8f" }
+  };
+  svg.querySelectorAll("[class]").forEach(n => {
+    n.getAttribute("class").split(" ").forEach(k => { if (map[k]) for (const a in map[k]) n.setAttribute(a, map[k][a]); });
+    if (n.classList.contains("outer") || n.classList.contains("mid")) n.setAttribute("stroke", "#b4bec8");
+    if (n.classList.contains("focus")) n.setAttribute("fill", "#4f6a5c");
+    n.removeAttribute("class");
+  });
+  return svg;
+}
+async function sendMail(e) {
+  e.preventDefault();
+  const status = $("mailStatus"), email = $("email").value.trim();
+  status.className = "status";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { status.className = "status err"; status.textContent = "Bitte prüf deine E-Mail-Adresse."; $("email").focus(); return; }
+  if (!$("consent").checked) { status.className = "status err"; status.textContent = "Bitte bestätige die Einwilligung, damit wir dir das Ergebnis schicken können."; return; }
+  const payload = buildPayload(email);
+  if (!EMAIL_CONFIG.endpoint) {
+    console.info("Lebensrad: E-Mail-Endpunkt fehlt. Payload:", payload);
+    status.className = "status err";
+    status.textContent = "Der E-Mail-Versand wird gerade eingerichtet. Versuch es bitte später noch einmal.";
+    return;
+  }
+  const btn = $("mailBtn"); btn.disabled = true; status.textContent = "Wird gesendet …";
+  try {
+    const res = await fetch(EMAIL_CONFIG.endpoint, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, EMAIL_CONFIG.headers), body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error(res.status);
+    status.className = "status ok"; status.textContent = "Ist unterwegs. Schau in dein Postfach, notfalls auch in den Spam-Ordner.";
+  } catch (err) {
+    status.className = "status err"; status.textContent = "Das hat nicht geklappt. Versuch es bitte gleich noch einmal.";
+  } finally { btn.disabled = false; }
+}
+
+/* ---------- Ablauf ---------- */
+function show(step) {
+  state.step = step; save();
+  $("intro").classList.toggle("hidden", step !== "intro");
+  $("step-wheel").classList.toggle("hidden", step !== "wheel");
+  $("step-reflect").classList.toggle("hidden", step !== "reflect");
+  $("step-result").classList.toggle("hidden", step !== "result");
+  $("cta").classList.toggle("hidden", step !== "result");
+  if (step === "wheel") { drawWheel($("wheel"), { interactive: true }); syncSliders(); }
+  if (step === "reflect") { state.focus = state.focus.filter(isSet); buildChips(); buildFocusCards(); $("signal").value = state.signal; }
+  if (step === "result") buildResult();
+  window.scrollTo({ top: 0 });
+}
+
+buildSliders();
+setupWheelInput();
+mq.addEventListener("change", () => { setRadius(); if (state.step === "wheel") drawWheel($("wheel"), { interactive: true }); if (state.step === "result") buildResult(); });
+$("date").value = state.date;
+$("date").addEventListener("change", (e) => { state.date = e.target.value; save(); });
+$("signal").addEventListener("input", (e) => { state.signal = e.target.value; save(); });
+$("startBtn").addEventListener("click", () => show("wheel"));
+$("toReflectBtn").addEventListener("click", () => { if (allSet()) show("reflect"); });
+$("backToWheelBtn").addEventListener("click", () => show("wheel"));
+$("toResultBtn").addEventListener("click", () => { if (state.focus.length === 3) show("result"); });
+$("backToReflectBtn").addEventListener("click", () => show("reflect"));
+$("resetBtn").addEventListener("click", () => { if (confirm("Alle Werte zurücksetzen?")) { state.scores = {}; state.focus = []; save(); show("wheel"); } });
+$("restartBtn").addEventListener("click", () => { if (confirm("Neu beginnen? Deine bisherigen Angaben werden gelöscht.")) { state = blankState(); $("date").value = state.date; save(); show("intro"); } });
+$("mailForm").addEventListener("submit", sendMail);
+
+const resumable = { intro: true, wheel: true, reflect: allSet(), result: allSet() && state.focus.length === 3 };
+show(resumable[state.step] ? state.step : (allSet() ? "reflect" : (Object.keys(state.scores).length ? "wheel" : "intro")));
+</script>
+</body>
+</html>
